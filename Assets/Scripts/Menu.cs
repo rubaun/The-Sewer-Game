@@ -8,6 +8,7 @@ public class Menu : MonoBehaviour
 {
     public GameObject pauseMenu;
     public GameObject telaMorte;
+    public GameObject gameOver;
     public GameObject player;
     public PlayerMovement playerMovement;
     public GameObject prefab;
@@ -26,9 +27,15 @@ public class Menu : MonoBehaviour
 
         if(!playerMovement.VerificaSePlayerEstaVivo())
         {
-            TelaDeMorte();
+            if(playerMovement.GameOver())
+            {
+                TelaGameOver();
+            }
+            else
+            {
+                TelaDeMorte();
+            }
         }
-        
     }
 
     public void PlayGame()
@@ -48,8 +55,11 @@ public class Menu : MonoBehaviour
 
     public void PauseMenu()
     {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0.0f;
+        if(pauseMenu != null)
+        {
+            pauseMenu.SetActive(true);
+            Time.timeScale = 0.0f;
+        }        
     }
 
     public void Continue()
@@ -60,16 +70,31 @@ public class Menu : MonoBehaviour
 
     public void TelaDeMorte()
     {
-        telaMorte.SetActive(true);
+        if(telaMorte != null)
+        {
+            telaMorte.SetActive(true);
+        }
+        
+    }
+
+    public void TelaGameOver()
+    {
+        if(gameOver != null)
+        {
+            gameOver.SetActive(true);
+        }
     }
 
     public void Replay()
     {
-        Instantiate(prefab, 
+        if(prefab != null)
+        {
+            Instantiate(prefab, 
                     playerMovement.PlayerPositionInicial(), 
                     Quaternion.identity);
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerMovement = player.GetComponent<PlayerMovement>();
-        telaMorte.SetActive(false);
+            player = GameObject.FindGameObjectWithTag("Player");
+            playerMovement = player.GetComponent<PlayerMovement>();
+            telaMorte.SetActive(false); 
+        }
     }
 }

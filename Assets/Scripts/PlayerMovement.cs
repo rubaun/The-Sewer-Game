@@ -12,9 +12,10 @@ public class PlayerMovement : MonoBehaviour
     public int velocidade;
     public bool estaPulando = false;
     public bool estaVivo = true;
+    private bool gameOver = false;
     private Vector3 posInicial;
     public int vida = 3;
-    public GameObject[] vidas = new GameObject[3]; 
+    public List<GameObject> vidas = new List<GameObject>(); 
     
 
     
@@ -25,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         posInicial = transform.position;
-        vidas = GameObject.FindGameObjectsWithTag("Heart");
+        Vidas();
     }
 
     // Update is called once per frame
@@ -86,9 +87,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(other.gameObject.CompareTag("Buraco"))
         {
-            estaVivo = false;
             Morte();
-            Destroy(this.gameObject);
         }
     }
 
@@ -104,20 +103,50 @@ public class PlayerMovement : MonoBehaviour
 
     private void Morte()
     {
-        vida--;
-        switch(vida)
+        
+        
+        estaVivo = false;
+        
+        if(vida == 3)
         {
-            case 2:
-            vidas[0].gameObject.SetActive(false);
-            break;
-            case 1:
-            vidas[1].gameObject.SetActive(false);
-            break;
-            case 0:
+            vida--;
             vidas[2].gameObject.SetActive(false);
-            break;   
+        }
+        else if(vida == 2)
+        {
+            vida--;
+            vidas[1].gameObject.SetActive(false);
+        }
+        else if(vida == 1)
+        {
+            vidas[0].gameObject.SetActive(false);
+            sprite.enabled = false;
+            gameOver = true;
+        }
+
+        Destroy(this.gameObject);
+        
+    }
+
+    private void Vidas()
+    {
+        vidas.Add(GameObject.Find("Heart1"));
+        vidas.Add(GameObject.Find("Heart2"));
+        vidas.Add(GameObject.Find("Heart3"));
+
+        if(vidas[1] == null)
+        {
+            vida = 1;
+        }
+        else if(vidas[2] == null)
+        {
+            vida = 2;
         }
     }
 
+    public bool GameOver()
+    {
+        return gameOver;
+    }
 
 }
