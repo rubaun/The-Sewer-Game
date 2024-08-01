@@ -9,6 +9,7 @@ TagManager:
   - Escada
   - Buraco
   - Heart
+  - Arrow
   layers:
   - Default
   - TransparentFX

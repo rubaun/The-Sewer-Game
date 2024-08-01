@@ -10,12 +10,13 @@ public class Menu : MonoBehaviour
     public GameObject telaMorte;
     public GameObject gameOver;
     public GameObject player;
-    public PlayerMovement playerMovement;
+    //public PlayerMovement playerMovement;
+    public Soldier playerMovement;
     public GameObject prefab;
 
     void Start() 
     {
-        playerMovement = player.GetComponent<PlayerMovement>();
+        playerMovement = player.GetComponent<Soldier>();
     }
 
     void Update() 
@@ -93,7 +94,7 @@ public class Menu : MonoBehaviour
                     playerMovement.PlayerPositionInicial(), 
                     Quaternion.identity);
             player = GameObject.FindGameObjectWithTag("Player");
-            playerMovement = player.GetComponent<PlayerMovement>();
+            playerMovement = player.GetComponent<Soldier>();
             telaMorte.SetActive(false); 
         }
     }
