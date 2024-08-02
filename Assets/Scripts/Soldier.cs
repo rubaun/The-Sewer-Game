@@ -7,6 +7,7 @@ public class Soldier : MonoBehaviour
     public Animator animPlayer;
     public SpriteRenderer sprite;
     public Rigidbody2D rb;
+    private PlayerSound playerSound;
     public float moveH;
     public int velocidade;
     public bool estaPulando = false;
@@ -27,6 +28,7 @@ public class Soldier : MonoBehaviour
         animPlayer = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        playerSound = GetComponent<PlayerSound>();
         posInicial = transform.position;
         Vidas();
     }
@@ -70,6 +72,7 @@ public class Soldier : MonoBehaviour
         //Pular
         if(Input.GetKeyDown(KeyCode.Space) && !estaPulando)
         {
+            playerSound.JumpSound();
             rb.AddForce(transform.up * velocidade, ForceMode2D.Impulse);
             estaPulando = true;
         }
@@ -78,6 +81,7 @@ public class Soldier : MonoBehaviour
         if(Input.GetMouseButton(0))
         {
             animPlayer.SetLayerWeight(2,1);
+            playerSound.Sword1Sound();
         }
         else
         {
@@ -100,6 +104,7 @@ public class Soldier : MonoBehaviour
         if(Input.GetMouseButton(2))
         {
             animPlayer.SetLayerWeight(4,1);
+            playerSound.Sword2Sound();
         }
         else
         {
@@ -189,6 +194,7 @@ public class Soldier : MonoBehaviour
     {
         if(!shot)
         {
+            playerSound.ArrowSound();
             Instantiate(arrow, mira.transform.position, Quaternion.identity);
             shot = true;
         }
@@ -197,6 +203,8 @@ public class Soldier : MonoBehaviour
     IEnumerator AnimaMorte()
     {
         animPlayer.SetTrigger("Death");
+
+        playerSound.DeathSound();
 
         yield return new WaitForSeconds(2.0f);
         
