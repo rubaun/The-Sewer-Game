@@ -15,7 +15,7 @@ public class Arrow : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
+        //transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
         StartCoroutine("DestroyAfter");
     }
 
@@ -39,6 +39,16 @@ public class Arrow : MonoBehaviour
     {
         yield return new WaitForSeconds(5.0f);
         Destroy(this.gameObject);
+    }
+
+    public void ArrowRight()
+    {
+        transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
+    }
+
+    public void ArrowLeft()
+    {
+        transform.position += new Vector3(-1 * speed * Time.deltaTime, 0, 0);
     }
     
 }

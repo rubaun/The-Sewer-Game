@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public int velocidade;
     public bool estaPulando = false;
     public bool estaVivo = true;
+    public bool estaEscada = false;
     private bool gameOver = false;
     private Vector3 posInicial;
     public int vida = 3;
@@ -72,23 +73,17 @@ public class PlayerMovement : MonoBehaviour
         moveH = Input.GetAxis("Horizontal");
         moveV = Input.GetAxis("Vertical");
         
-        
-        transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
-        
-
-    }
-
-    private void OnCollisionEnter2D(Collision2D other) 
-    {
-        if(other.gameObject.CompareTag("Chão"))
+        if(estaEscada)
         {
-            estaPulando = false;
+            transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
         }
-
-        if(other.gameObject.CompareTag("Buraco"))
+        else
         {
-            Morte();
+            transform.position += new Vector3(0, moveV * velocidade * Time.deltaTime, 0);
         }
+        
+        
+
     }
 
     public bool VerificaSePlayerEstaVivo()
@@ -147,6 +142,49 @@ public class PlayerMovement : MonoBehaviour
     public bool GameOver()
     {
         return gameOver;
+    }
+
+    private void VerificaEstaEscada()
+    {
+        estaEscada = !estaEscada;
+        if(estaEscada)
+        {
+            rb.Sleep();
+        }
+        else
+        {
+            rb.WakeUp();
+        }
+    }
+
+     private void OnCollisionEnter2D(Collision2D other) 
+    {
+        if(other.gameObject.CompareTag("Chão"))
+        {
+            estaPulando = false;
+        }
+
+        if(other.gameObject.CompareTag("Buraco"))
+        {
+            Morte();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other) 
+    {
+        if(other.gameObject.CompareTag("Escada"))
+        {
+            VerificaEstaEscada();
+        }    
+    }
+
+    private void OnTriggerExit2D(Collider2D other) 
+    {
+        if(other.gameObject.CompareTag("Escada"))
+        {
+            
+            VerificaEstaEscada();
+        }
     }
 
 }

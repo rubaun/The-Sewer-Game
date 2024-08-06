@@ -9,11 +9,14 @@ public class Soldier : MonoBehaviour
     public Rigidbody2D rb;
     private PlayerSound playerSound;
     public float moveH;
+    public float moveV;
     public int velocidade;
     public bool estaPulando = false;
     public bool estaVivo = true;
+    public bool estaEscada = false;
     private bool gameOver = false;
     private bool shot = false;
+    private bool atirandoDir = true;
     private Vector3 posInicial;
     public int vida = 3;
     public GameObject arrow;
@@ -39,11 +42,11 @@ public class Soldier : MonoBehaviour
         //Animação Run para a direita e esqueda
         if(Input.GetKey(KeyCode.D))
         {
-            sprite.flipX = false;
+            ViraDireita();
         }
         else if(Input.GetKey(KeyCode.A))
         {
-            sprite.flipX = true;
+            ViraEsquerda();
         }
 
         if(moveH > 0)
@@ -114,9 +117,18 @@ public class Soldier : MonoBehaviour
 
     void FixedUpdate() 
     {
-        moveH = Input.GetAxis("Horizontal");        
+        moveH = Input.GetAxis("Horizontal");
+        moveV = Input.GetAxis("Vertical");
         
-        transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
+        if(estaEscada)
+        {
+            transform.position += new Vector3(0, moveV * velocidade * Time.deltaTime, 0);
+        }
+        else
+        {
+            transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
+        }
+        
     
     }
 
@@ -130,6 +142,23 @@ public class Soldier : MonoBehaviour
         if(other.gameObject.CompareTag("Buraco"))
         {
             Morte();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other) 
+    {
+        if(other.gameObject.CompareTag("Escada"))
+        {
+            VerificaEstaEscada();
+        }    
+    }
+
+    private void OnTriggerExit2D(Collider2D other) 
+    {
+        if(other.gameObject.CompareTag("Escada"))
+        {
+            
+            VerificaEstaEscada();
         }
     }
 
@@ -147,26 +176,8 @@ public class Soldier : MonoBehaviour
     {
                 
         estaVivo = false;
-        
-        if(vida == 3)
-        {
-            vida--;
-            vidas[2].gameObject.SetActive(false);
-        }
-        else if(vida == 2)
-        {
-            vida--;
-            vidas[1].gameObject.SetActive(false);
-        }
-        else if(vida == 1)
-        {
-            vidas[0].gameObject.SetActive(false);
-            sprite.enabled = false;
-            gameOver = true;
-        }
 
         StartCoroutine("AnimaMorte");
-        
     }
 
     private void Vidas()
@@ -195,8 +206,30 @@ public class Soldier : MonoBehaviour
         if(!shot)
         {
             playerSound.ArrowSound();
-            Instantiate(arrow, mira.transform.position, Quaternion.identity);
+            
+            if(atirandoDir)
+            {
+                Instantiate(arrow, mira.transform.position, Quaternion.identity).GetComponent<Arrow>().ArrowRight();
+            }
+            else
+            {
+                Instantiate(arrow, mira.transform.position, Quaternion.identity).GetComponent<Arrow>().ArrowLeft();
+            }
+                       
             shot = true;
+        }
+    }
+
+    private void VerificaEstaEscada()
+    {
+        estaEscada = !estaEscada;
+        if(estaEscada)
+        {
+            rb.Sleep();
+        }
+        else
+        {
+            rb.WakeUp();
         }
     }
 
@@ -207,6 +240,23 @@ public class Soldier : MonoBehaviour
         playerSound.DeathSound();
 
         yield return new WaitForSeconds(2.0f);
+
+        if(vida == 3)
+        {
+            vida--;
+            vidas[2].gameObject.SetActive(false);
+        }
+        else if(vida == 2)
+        {
+            vida--;
+            vidas[1].gameObject.SetActive(false);
+        }
+        else if(vida == 1)
+        {
+            vidas[0].gameObject.SetActive(false);
+            sprite.enabled = false;
+            gameOver = true;
+        }
         
         Destroy(this.gameObject);
 
@@ -214,5 +264,17 @@ public class Soldier : MonoBehaviour
         {
             StopCoroutine("AnimaMorte");
         }
-    }           
+    }    
+
+    private void ViraDireita()
+    {
+        sprite.flipX = false;
+        atirandoDir = true;
+    }   
+
+    private void ViraEsquerda()
+    {
+        sprite.flipX = true;
+        atirandoDir = false;
+    }    
 }
