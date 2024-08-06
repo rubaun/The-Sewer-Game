@@ -213,7 +213,7 @@ public class Soldier : MonoBehaviour
             }
             else
             {
-                Instantiate(arrow, mira.transform.position, Quaternion.identity).GetComponent<Arrow>().ArrowLeft();
+                Instantiate(arrow, mira.transform.position, Quaternion.Euler(0,180f,0)).GetComponent<Arrow>().ArrowLeft();
             }
                        
             shot = true;

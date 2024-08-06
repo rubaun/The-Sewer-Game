@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Key : MonoBehaviour
 {
+    public int codigo;
+    [Header("Cor da Chave")]
+    public cores cor;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,3 +21,4 @@ public class Key : MonoBehaviour
         
     }
 }
+public enum cores { 0, 1, 2,}

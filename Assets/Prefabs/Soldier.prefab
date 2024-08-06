@@ -129,9 +129,11 @@ MonoBehaviour:
   sprite: {fileID: 0}
   rb: {fileID: 0}
   moveH: 0
+  moveV: 0
   velocidade: 5
   estaPulando: 0
   estaVivo: 1
+  estaEscada: 0
   vida: 3
   arrow: {fileID: 4861200941454480928, guid: 031d78667af0313438320b9af5d8272b, type: 3}
   mira: {fileID: 6228169014868620550}
@@ -421,7 +423,7 @@ Transform:
   m_GameObject: {fileID: 6228169014868620550}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.149, y: -0.007, z: -0.020204987}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []

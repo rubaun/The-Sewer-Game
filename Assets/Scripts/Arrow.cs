@@ -6,6 +6,7 @@ public class Arrow : MonoBehaviour
 {
     public float speed;
     public int hit;
+    private bool direcaoDir;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +16,15 @@ public class Arrow : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if(direcaoDir)
+        {
+            transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
+        }
+        else if(!direcaoDir)
+        {
+            transform.position += new Vector3(-1 * speed * Time.deltaTime, 0, 0);
+        }
+
         //transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
         StartCoroutine("DestroyAfter");
     }
@@ -43,12 +53,12 @@ public class Arrow : MonoBehaviour
 
     public void ArrowRight()
     {
-        transform.position += new Vector3(1 * speed * Time.deltaTime, 0, 0);
+        direcaoDir = true;
     }
 
     public void ArrowLeft()
     {
-        transform.position += new Vector3(-1 * speed * Time.deltaTime, 0, 0);
+        direcaoDir = false;
     }
     
 }
