@@ -308,4 +308,16 @@ public class Soldier : MonoBehaviour
             }
         }
     }
+
+    public void RemoverChave(int codigo)
+    {
+        foreach(GameObject i in inventario)
+        {
+            if(i.GetComponent<Key>().GetCodigo() == codigo)
+            {
+                inventario.Remove(i);
+                break;
+            }
+        }
+    }
 }

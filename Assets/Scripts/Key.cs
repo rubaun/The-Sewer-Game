@@ -20,6 +20,8 @@ public class Key : MonoBehaviour
     [Header("Chave da Interface do Usuário")]
     [SerializeField] private GameObject keyInterface;
     private GameObject player;
+    private AudioSource audioKey;
+    [SerializeField] private AudioClip audioClip;
 
 
 
@@ -27,11 +29,10 @@ public class Key : MonoBehaviour
     void Start()
     {
         sprite = GetComponent<SpriteRenderer>();
-        sprite.color = cor;
-        portaBau.GetComponent<SpriteRenderer>().color = cor;
         keyInterface.SetActive(false);
-        keyInterface.GetComponent<Image>().color = cor;
         player = GameObject.FindGameObjectWithTag("Player");
+        audioKey = GetComponent<AudioSource>();
+        SetColors();
     }
 
     // Update is called once per frame
@@ -44,14 +45,28 @@ public class Key : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            player.GetComponent<Soldier>().AddItem(key);
-            Destroy(this.gameObject);
-            keyInterface.SetActive(true);
+            ChaveParaInventario();
         }
     }
 
     public int GetCodigo()
     {
         return codigo;
+    }
+
+    public void ChaveParaInventario()
+    {
+        audioKey.PlayOneShot(audioClip);
+        player.GetComponent<Soldier>().AddItem(key);
+        keyInterface.SetActive(true);
+        key.SetActive(false);
+        SetColors();
+    }
+
+    private void SetColors()
+    {
+        sprite.color = cor;
+        portaBau.GetComponent<SpriteRenderer>().color = cor;
+        keyInterface.GetComponent<Image>().color = cor;
     }
 }

@@ -10,6 +10,8 @@ TagManager:
   - Buraco
   - Heart
   - Arrow
+  - Key
+  - Bau
   layers:
   - Default
   - TransparentFX
