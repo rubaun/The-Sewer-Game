@@ -21,7 +21,9 @@ public class Soldier : MonoBehaviour
     public int vida = 3;
     public GameObject arrow;
     public GameObject mira;
-    public List<GameObject> vidas = new List<GameObject>(); 
+    public List<GameObject> vidas = new List<GameObject>();
+    [Header("Inventário")]
+    [SerializeField] private List<GameObject> inventario = new List<GameObject>();
     
 
     
@@ -277,4 +279,33 @@ public class Soldier : MonoBehaviour
         sprite.flipX = true;
         atirandoDir = false;
     }    
+
+    public void AddItem(GameObject item)
+    {
+        inventario.Add(item);
+    }
+
+    public bool ConsultaChave(int codigo)
+    {
+        foreach(GameObject i in inventario)
+        {
+            if(i.GetComponent<Key>().GetCodigo() == codigo)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void RemoveItem(string item)
+    {
+        foreach(GameObject i in inventario)
+        {
+            if(i.name == item)
+            {
+                inventario.Remove(i);
+                break;
+            }
+        }
+    }
 }
