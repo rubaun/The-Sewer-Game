@@ -294,6 +294,7 @@ public class Soldier : MonoBehaviour
                 return true;
             }
         }
+
         return false;
     }
 

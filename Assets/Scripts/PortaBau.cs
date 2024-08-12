@@ -38,7 +38,16 @@ public class PortaBau : MonoBehaviour
             chaveInterface.SetActive(false);
             foreach(GameObject item in itens)
             {
-                player.GetComponent<Soldier>().AddItem(item);
+                if(item.GetComponent<Key>())
+                {
+                    item.gameObject.SetActive(true);
+                    item.GetComponent<Key>().ChaveParaInventario();
+                }
+                else
+                {
+                    player.GetComponent<Soldier>().AddItem(item);
+                }
+                
             }
             
         }

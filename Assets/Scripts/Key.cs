@@ -41,10 +41,16 @@ public class Key : MonoBehaviour
         
     }
 
+    private void OnDisable()
+    {
+        audioKey.PlayOneShot(audioClip);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            //audioKey.PlayOneShot(audioClip);
             ChaveParaInventario();
         }
     }
@@ -56,7 +62,6 @@ public class Key : MonoBehaviour
 
     public void ChaveParaInventario()
     {
-        audioKey.PlayOneShot(audioClip);
         player.GetComponent<Soldier>().AddItem(key);
         keyInterface.SetActive(true);
         key.SetActive(false);
