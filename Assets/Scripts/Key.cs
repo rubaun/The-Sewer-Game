@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Key : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class Key : MonoBehaviour
     private GameObject player;
     private AudioSource audioKey;
     [SerializeField] private AudioClip audioClip;
+    [Header("Animação da chave")]
+    [SerializeField] private float velocidade = 1.5f;
+    [SerializeField] private Vector3 inicialPos;
+    [SerializeField] private Vector3 target;
+    [SerializeField] private float distancia = 1.0f;
 
 
 
@@ -33,12 +39,22 @@ public class Key : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         audioKey = GetComponent<AudioSource>();
         SetColors();
+        inicialPos = this.gameObject.transform.position;
+        target = inicialPos;
     }
 
     // Update is called once per frame
     void Update()
     {
         
+        var step = velocidade * Time.deltaTime; 
+        var difTarget = new Vector3(target.x, target.y - distancia, 0);
+        transform.position = Vector3.MoveTowards(transform.position, difTarget, step);
+
+        if (Vector3.Distance(transform.position, difTarget) < 0.001f)
+        {
+            target.y *= -1.0f;
+        }
     }
 
     private void OnDisable()

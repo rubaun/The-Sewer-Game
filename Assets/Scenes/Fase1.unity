@@ -315,7 +315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &90783165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,6 +334,10 @@ MonoBehaviour:
   cor: {r: 1, g: 0.51526874, b: 0, a: 1}
   keyInterface: {fileID: 474664244}
   audioClip: {fileID: 8300000, guid: 0c5530b0c4039174eb1fe17880b2c449, type: 3}
+  velocidade: 1.5
+  inicialPos: {x: 0, y: 0, z: 0}
+  target: {x: 0, y: 0, z: 0}
+  distancia: 1
 --- !u!60 &90783166
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -398,7 +402,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 90783164}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 199f2559b7136ae47960cc97e002f874, type: 2}
   m_CullingMode: 0
@@ -14780,6 +14784,10 @@ MonoBehaviour:
   cor: {r: 1, g: 0, b: 0.5446758, a: 1}
   keyInterface: {fileID: 474664244}
   audioClip: {fileID: 8300000, guid: 0c5530b0c4039174eb1fe17880b2c449, type: 3}
+  velocidade: 1.5
+  inicialPos: {x: 0, y: 0, z: 0}
+  target: {x: 0, y: 0, z: 0}
+  distancia: 1
 --- !u!60 &1186732926
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -14844,7 +14852,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186732924}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 199f2559b7136ae47960cc97e002f874, type: 2}
   m_CullingMode: 0
@@ -16427,7 +16435,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1814120605}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 199f2559b7136ae47960cc97e002f874, type: 2}
   m_CullingMode: 0
@@ -16525,6 +16533,10 @@ MonoBehaviour:
   cor: {r: 0, g: 1, b: 0.391186, a: 1}
   keyInterface: {fileID: 474664244}
   audioClip: {fileID: 8300000, guid: 0c5530b0c4039174eb1fe17880b2c449, type: 3}
+  velocidade: 1.5
+  inicialPos: {x: 0, y: 0, z: 0}
+  target: {x: 0, y: 0, z: 0}
+  distancia: 1
 --- !u!60 &1814120610
 PolygonCollider2D:
   m_ObjectHideFlags: 0
