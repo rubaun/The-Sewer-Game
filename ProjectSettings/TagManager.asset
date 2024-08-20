@@ -12,6 +12,7 @@ TagManager:
   - Arrow
   - Key
   - Bau
+  - Tiro
   layers:
   - Default
   - TransparentFX
