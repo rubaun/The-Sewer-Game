@@ -42,21 +42,14 @@ public class Soldier : MonoBehaviour
     void Update()
     {
         //Animação Run para a direita e esqueda
-        if(Input.GetKey(KeyCode.D))
+        if(Input.GetKey(KeyCode.D) && moveH > 0)
         {
             ViraDireita();
-        }
-        else if(Input.GetKey(KeyCode.A))
-        {
-            ViraEsquerda();
-        }
-
-        if(moveH > 0)
-        {
             animPlayer.SetLayerWeight(1,1);
         }
-        else if(moveH < 0)
+        else if(Input.GetKey(KeyCode.A) && moveH < 0)
         {
+            ViraEsquerda();
             animPlayer.SetLayerWeight(1,1);
         }
         else
@@ -67,19 +60,22 @@ public class Soldier : MonoBehaviour
         //Animação Pular
         if(estaPulando)
         {
-            animPlayer.SetLayerWeight(1,1);
+            animPlayer.SetLayerWeight(6,1);
         }
         else
         {
-            animPlayer.SetLayerWeight(1,0);
+            animPlayer.SetLayerWeight(6,0);
         }
 
         //Pular
         if(Input.GetKeyDown(KeyCode.Space) && !estaPulando)
         {
-            playerSound.JumpSound();
-            rb.AddForce(transform.up * velocidade, ForceMode2D.Impulse);
-            estaPulando = true;
+            if(rb.velocity.y == 0)
+            {
+                playerSound.JumpSound();
+                rb.AddForce(transform.up * velocidade, ForceMode2D.Impulse);
+                estaPulando = true;
+            }
         }
 
         //Ataque Espada
@@ -260,12 +256,12 @@ public class Soldier : MonoBehaviour
             gameOver = true;
         }
         
-        Destroy(this.gameObject);
-
         if(estaVivo)
         {
             StopCoroutine("AnimaMorte");
         }
+        
+        Destroy(this.gameObject);
     }    
 
     private void ViraDireita()

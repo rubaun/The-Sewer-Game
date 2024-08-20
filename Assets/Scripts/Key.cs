@@ -8,22 +8,22 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Key : MonoBehaviour
 {
-    [Header("Código da chave")]
+    [Header("Cï¿½digo da chave")]
     [SerializeField] private int codigo;
     [Header("Chave usada na fase")]
     [SerializeField] private GameObject key;
-    [Header("Porta ou Baú que abrirá")]
+    [Header("Porta ou Baï¿½ que abrirï¿½")]
     [SerializeField] private GameObject portaBau;
     private SpriteRenderer sprite;
     [ColorUsage(true, true)]
     [Header("Cor da chave")]
     [SerializeField] private Color cor = Color.white;
-    [Header("Chave da Interface do Usuário")]
+    [Header("Chave da Interface do Usuï¿½rio")]
     [SerializeField] private GameObject keyInterface;
     private GameObject player;
     private AudioSource audioKey;
     [SerializeField] private AudioClip audioClip;
-    [Header("Animação da chave")]
+    [Header("Animaï¿½ï¿½o da chave")]
     [SerializeField] private float velocidade = 1.5f;
     [SerializeField] private Vector3 inicialPos;
     [SerializeField] private Vector3 target;
@@ -47,8 +47,10 @@ public class Key : MonoBehaviour
     void Update()
     {
         
-        var step = velocidade * Time.deltaTime; 
+        var step = velocidade * Time.deltaTime;
+
         var difTarget = new Vector3(target.x, target.y - distancia, 0);
+        
         transform.position = Vector3.MoveTowards(transform.position, difTarget, step);
 
         if (Vector3.Distance(transform.position, difTarget) < 0.001f)
