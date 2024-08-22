@@ -6,69 +6,83 @@ public class Orc : MonoBehaviour
 {
     public Animator anim;
     public SpriteRenderer sprite;
-    public bool patrulhaMod;
-    public bool attackMod;
-    public bool estaVivo;
-    public bool estaAndando;
-    public int velocidade;
-    public Vector3 inicialPos;
-    public Vector3 target;
-    public float distancia;
-
+    public Vector3 pontoA;
+    public Vector3 pontoB;
+    public float velocidadePatrulha;
+    public float velocidadePersegue;
+    public float distanciaAtaque;
+    public float distanciaDetecao;
+    public GameObject jogador;
+    public Vector3 pontoAtual;
+    public Rigidbody2D rb;
+    public bool persegue;
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        inicialPos = this.gameObject.transform.position;
-        target = inicialPos;
+        rb = GetComponent<Rigidbody2D>();
+        jogador = GameObject.FindGameObjectWithTag("Player");
+        pontoAtual = pontoA;
     }
 
     // Update is called once per frame
     void Update()
     {
-        ModoPatrulha();
+        float distanciaPlayer = Vector3.Distance(transform.position, jogador.transform.position);
+
+        if(distanciaPlayer < distanciaDetecao)
+        {
+            persegue = true;
+        }
+        else
+        {
+            persegue = false;
+        }
+
+        if(persegue && distanciaPlayer < distanciaAtaque)
+        {
+            ModoAtaque();
+        }
+        else if(persegue)
+        {
+            ModoPersegue();
+        }
+        else
+        {
+            ModoPatrulha();
+        }
+    }
+
+    private void ModoAtaque()
+    {
+        rb.velocity = Vector3.zero;
+    }
+
+    private void ModoPersegue()
+    {
+        Vector3 direcaoMovimento = (jogador.transform.position - transform.position).normalized;
+        rb.velocity = new Vector3(direcaoMovimento.x * velocidadePersegue, rb.velocity.y, 0);
     }
 
     private void ModoPatrulha()
     {
-        estaAndando = true;
+        Vector3 target = new Vector3(0,0,0);
 
-        var step = velocidade * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, target, velocidadePatrulha * Time.deltaTime);
 
-        var difTarget = new Vector3(target.x - distancia, target.y, 0);
-        
-        transform.position = Vector3.MoveTowards(transform.position, difTarget, step);
-
-        if (Vector3.Distance(transform.position, difTarget) < 0.001f)
+        if(Vector3.Distance(transform.position, target) < 0.001f)
         {
-            target.x *= -1.0f;
+            if(!persegue)
+            {
+                target = pontoB;
+            }
+            else
+            {
+                target = pontoA;
+            }
         }
     }
 
-    private void ModoAttack()
-    {
 
-    }
-
-    private void ModoDeAnimacao()
-    {
-        if(!estaAndando)
-        {
-            anim.SetLayerWeight(1,0);
-            anim.SetLayerWeight(2,0);
-            anim.SetLayerWeight(3,0);
-            anim.SetLayerWeight(4,0);
-        }
-        else if(estaAndando)
-        {
-            anim.SetLayerWeight(1,1);
-        }
-
-    }
-
-    private bool EstaVivo()
-    {
-        return estaVivo;
-    }
 }
