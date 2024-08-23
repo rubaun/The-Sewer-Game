@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEditor;
 
 public class PortaBau : MonoBehaviour
 {
     [Header("Código da chave")]
     [SerializeField] private int codigo;
     [SerializeField] private AudioClip audioClip;
+    [Header("Marque se for uma porta")]
+    [SerializeField] private bool isPorta;
+    [SerializeField] private SceneAsset nextScene;
     private AudioSource audioPlayer;
     private Animator anim;
     private GameObject player;
@@ -33,10 +39,17 @@ public class PortaBau : MonoBehaviour
         if(collision.gameObject.CompareTag("Player") && player.GetComponent<Soldier>().ConsultaChave(codigo))
         {
             audioPlayer.PlayOneShot(audioClip);
-            anim.SetLayerWeight(1, 1);
+            if (anim != null)
+            {
+                anim.SetLayerWeight(1, 1);
+            }
             player.GetComponent<Soldier>().RemoverChave(codigo);
             chaveInterface.SetActive(false);
-            foreach(GameObject item in itens)
+            if (isPorta)
+            {
+                SceneManager.LoadScene(nextScene.name);
+            }
+            foreach (GameObject item in itens)
             {
                 if(item.GetComponent<Key>())
                 {
