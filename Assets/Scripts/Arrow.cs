@@ -60,5 +60,10 @@ public class Arrow : MonoBehaviour
     {
         direcaoDir = false;
     }
+
+    public int GetHit()
+    {
+        return hit;
+    }
     
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Soldier : MonoBehaviour
@@ -8,6 +9,7 @@ public class Soldier : MonoBehaviour
     public SpriteRenderer sprite;
     public Rigidbody2D rb;
     private PlayerSound playerSound;
+    public Vector3 playerPosition;
     public float moveH;
     public float moveV;
     public int velocidade;
@@ -24,9 +26,12 @@ public class Soldier : MonoBehaviour
     public List<GameObject> vidas = new List<GameObject>();
     [Header("Inventário")]
     [SerializeField] private List<GameObject> inventario = new List<GameObject>();
-    
 
-    
+    private void Awake()
+    {
+        LoadPlayer();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -120,11 +125,11 @@ public class Soldier : MonoBehaviour
         
         if(estaEscada)
         {
-            transform.position += new Vector3(0, moveV * velocidade * Time.deltaTime, 0);
+            playerPosition = transform.position += new Vector3(0, moveV * velocidade * Time.deltaTime, 0);
         }
         else
         {
-            transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
+            playerPosition = transform.position += new Vector3(moveH * velocidade * Time.deltaTime, 0, 0);
         }
         
     
@@ -148,7 +153,19 @@ public class Soldier : MonoBehaviour
         if(other.gameObject.CompareTag("Escada"))
         {
             VerificaEstaEscada();
-        }    
+        }
+
+        if (other.gameObject.CompareTag("Inimigo"))
+        {
+            if (Input.GetMouseButton(0))
+            {
+                other.gameObject.GetComponent<Orc>().Dano(Ataque());
+            }
+            else if(Input.GetMouseButton(1))
+            {
+                other.gameObject.GetComponent<Orc>().Dano(AtaqueEspecial());
+            }
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other) 
@@ -158,6 +175,21 @@ public class Soldier : MonoBehaviour
             
             VerificaEstaEscada();
         }
+    }
+
+    private int Ataque()
+    {
+        return 10;
+    }
+
+    private int AtaqueEspecial()
+    {
+        return Random.Range(15, 25);
+    }
+
+    private int AtaqueArco()
+    {
+        return Random.Range(10, 15); ;
     }
 
     public bool VerificaSePlayerEstaVivo()
@@ -316,5 +348,42 @@ public class Soldier : MonoBehaviour
                 break;
             }
         }
+    }
+
+    [System.Serializable]
+    class SaveData
+    {
+        public Vector3 playerPosition;
+        public List<GameObject> inventario;
+        public List<GameObject> vidas;
+    }
+
+    public void SavePlayer()
+    {
+        SaveData data = new SaveData();
+        data.playerPosition = transform.position;
+        data.vidas = vidas;
+        data.inventario = inventario;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savePlayer.json", json);
+    }
+
+    public void LoadPlayer()
+    {
+        string path = Application.persistentDataPath + "/savePlayer.json";
+
+        if(File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            transform.position = data.playerPosition;
+            vidas = data.vidas;
+            inventario = data.inventario;
+        }
+        
     }
 }

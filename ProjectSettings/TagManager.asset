@@ -13,6 +13,8 @@ TagManager:
   - Key
   - Bau
   - Tiro
+  - Patrulha
+  - Inimigo
   layers:
   - Default
   - TransparentFX

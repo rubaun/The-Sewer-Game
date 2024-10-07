@@ -14,11 +14,14 @@ public class Menu : MonoBehaviour
     public Soldier playerMovement;
     public GameObject prefab;
     public PlayerSound audioSource;
+    public Soldier soldier;
+
 
     void Start() 
     {
         playerMovement = player.GetComponent<Soldier>();
         audioSource = GetComponent<PlayerSound>();
+        soldier = FindObjectOfType<Soldier>();
     }
 
     void Update() 
@@ -56,6 +59,7 @@ public class Menu : MonoBehaviour
     public void SairGame()
     {
         //audioSource.MouseOverSound();
+        soldier.SavePlayer();
         Application.Quit();
     }
 

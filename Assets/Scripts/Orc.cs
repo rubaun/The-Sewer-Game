@@ -1,88 +1,105 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Orc : MonoBehaviour
 {
-    public Animator anim;
-    public SpriteRenderer sprite;
-    public Vector3 pontoA;
-    public Vector3 pontoB;
-    public float velocidadePatrulha;
-    public float velocidadePersegue;
-    public float distanciaAtaque;
-    public float distanciaDetecao;
-    public GameObject jogador;
-    public Vector3 pontoAtual;
-    public Rigidbody2D rb;
-    public bool persegue;
+    [SerializeField] private float velocidadePatrulha;
+    [SerializeField] private int direcao;
+    [SerializeField] private BoxCollider2D triggerLeft;
+    [SerializeField] private BoxCollider2D triggerRight;
+    [SerializeField] private int vida;
+    private bool encounter;
+    private Animator anim;
+    private SpriteRenderer sprite;
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
-        jogador = GameObject.FindGameObjectWithTag("Player");
-        pontoAtual = pontoA;
+        triggerLeft = GetComponent<BoxCollider2D>();
+        triggerRight = GetComponent<BoxCollider2D>();
+        direcao = 1;
+        velocidadePatrulha = 0.5f;
+        encounter = false;
+        vida = 100;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float distanciaPlayer = Vector3.Distance(transform.position, jogador.transform.position);
+     
+    }
 
-        if(distanciaPlayer < distanciaDetecao)
+    private void FixedUpdate()
+    {
+        if (!encounter)
         {
-            persegue = true;
-        }
-        else
-        {
-            persegue = false;
-        }
-
-        if(persegue && distanciaPlayer < distanciaAtaque)
-        {
-            ModoAtaque();
-        }
-        else if(persegue)
-        {
-            ModoPersegue();
-        }
-        else
-        {
-            ModoPatrulha();
+            Patrulha();
         }
     }
 
-    private void ModoAtaque()
+    private void Patrulha()
     {
-        rb.velocity = Vector3.zero;
+        Vector3 dirEnemy = new Vector3(direcao, 0, 0);
+        transform.Translate(dirEnemy * velocidadePatrulha * Time.deltaTime);
+        anim.SetLayerWeight(1, 1);
     }
 
-    private void ModoPersegue()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Vector3 direcaoMovimento = (jogador.transform.position - transform.position).normalized;
-        rb.velocity = new Vector3(direcaoMovimento.x * velocidadePersegue, rb.velocity.y, 0);
-    }
-
-    private void ModoPatrulha()
-    {
-        Vector3 target = new Vector3(0,0,0);
-
-        transform.position = Vector3.MoveTowards(transform.position, target, velocidadePatrulha * Time.deltaTime);
-
-        if(Vector3.Distance(transform.position, target) < 0.001f)
+        if (collision.gameObject.CompareTag("Patrulha"))
         {
-            if(!persegue)
+            if (direcao == 1)
             {
-                target = pontoB;
+                direcao = -1;
+                sprite.flipX = true;
             }
             else
             {
-                target = pontoA;
+                direcao = 1;
+                sprite.flipX = false;
             }
+        }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            anim.SetLayerWeight(2,1);
+            encounter = true;
+        }
+
+        if(collision.gameObject.CompareTag("Arrow"))
+        {
+            Dano(collision.gameObject.GetComponent<Arrow>().GetHit());
         }
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            anim.SetLayerWeight(2, 0);
+            encounter = false;
+        }
+    }
+
+    public void Dano(int dano)
+    {
+        vida -= dano;
+        anim.SetLayerWeight(4, 1);
+
+        if (vida <= 0)
+        {
+            anim.SetLayerWeight(4, 0);
+            anim.SetTrigger("Death");
+            Destroy(gameObject);
+        }
+        else
+        {
+            anim.SetLayerWeight(4, 0);
+        }
+    }
 
 }
