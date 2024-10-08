@@ -157,6 +157,8 @@ public class Soldier : MonoBehaviour
 
         if (other.gameObject.CompareTag("Inimigo"))
         {
+            Debug.Log("Inimigo");
+
             if (Input.GetMouseButton(0))
             {
                 other.gameObject.GetComponent<Orc>().Dano(Ataque());

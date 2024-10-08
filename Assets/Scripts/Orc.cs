@@ -94,12 +94,18 @@ public class Orc : MonoBehaviour
         {
             anim.SetLayerWeight(4, 0);
             anim.SetTrigger("Death");
-            Destroy(gameObject);
+            StartCoroutine("WaitToDeath");
         }
         else
         {
             anim.SetLayerWeight(4, 0);
         }
+    }
+
+    IEnumerable WaitToDeath()
+    {
+        yield return new WaitForSeconds(2.5f);
+        Destroy(this.gameObject);
     }
 
 }
