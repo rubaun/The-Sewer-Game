@@ -15,6 +15,9 @@ TagManager:
   - Tiro
   - Patrulha
   - Inimigo
+  - TriggerLeft
+  - TriggerRight
+  - Ataque
   layers:
   - Default
   - TransparentFX

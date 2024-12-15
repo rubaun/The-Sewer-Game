@@ -31,7 +31,8 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) 
     {
-        if(!other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("Chão"))
+        if(!other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("Chão") 
+            || other.gameObject.CompareTag("TriggerLeft") || other.gameObject.CompareTag("TriggerRight"))
         {
             Destroy(this.gameObject);
         }
@@ -39,7 +40,8 @@ public class Arrow : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other) 
     {
-        if(!other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("Chão"))
+        if (!other.gameObject.CompareTag("Player") || other.gameObject.CompareTag("Chão")
+            || other.gameObject.CompareTag("TriggerLeft") || other.gameObject.CompareTag("TriggerRight"))
         {
             Destroy(this.gameObject);
         }
@@ -47,7 +49,7 @@ public class Arrow : MonoBehaviour
 
     IEnumerator DestroyAfter()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(2.0f);
         Destroy(this.gameObject);
     }
 

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Orc : MonoBehaviour
 {
+    [SerializeField] private Transform player;
     [SerializeField] private float velocidadePatrulha;
-    [SerializeField] private int direcao;
-    [SerializeField] private BoxCollider2D triggerLeft;
-    [SerializeField] private BoxCollider2D triggerRight;
     [SerializeField] private int vida;
+    private bool estahVivo;
+    private int direcao;
     private bool encounter;
     private Animator anim;
     private SpriteRenderer sprite;
@@ -17,25 +17,19 @@ public class Orc : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         anim = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        triggerLeft = GetComponent<BoxCollider2D>();
-        triggerRight = GetComponent<BoxCollider2D>();
         direcao = 1;
         velocidadePatrulha = 0.5f;
         encounter = false;
         vida = 100;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-     
+        estahVivo = true;
     }
 
     private void FixedUpdate()
     {
-        if (!encounter)
+        if (!encounter && estahVivo)
         {
             Patrulha();
         }
@@ -45,12 +39,12 @@ public class Orc : MonoBehaviour
     {
         Vector3 dirEnemy = new Vector3(direcao, 0, 0);
         transform.Translate(dirEnemy * velocidadePatrulha * Time.deltaTime);
-        anim.SetLayerWeight(1, 1);
+        anim.SetBool("Andando", true);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Patrulha"))
+        if (collision.gameObject.CompareTag("Patrulha") && estahVivo)
         {
             if (direcao == 1)
             {
@@ -64,48 +58,104 @@ public class Orc : MonoBehaviour
             }
         }
 
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && estahVivo)
         {
-            anim.SetLayerWeight(2,1);
             encounter = true;
+            EnemyFlip();
+            StartCoroutine(Ataque());
         }
 
-        if(collision.gameObject.CompareTag("Arrow"))
+        if (collision.gameObject.CompareTag("Arrow") && estahVivo)
         {
             Dano(collision.gameObject.GetComponent<Arrow>().GetHit());
         }
     }
 
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            LevarDanoSoldier();
+        }
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && estahVivo)
         {
-            anim.SetLayerWeight(2, 0);
+            StopCoroutine(Ataque());
             encounter = false;
+
+            if (direcao == 1)
+            {
+                direcao = -1;
+                sprite.flipX = true;
+            }
+            else
+            {
+                direcao = 1;
+                sprite.flipX = false;
+            }
         }
     }
 
     public void Dano(int dano)
     {
-        vida -= dano;
-        anim.SetLayerWeight(4, 1);
-
         if (vida <= 0)
         {
-            anim.SetLayerWeight(4, 0);
-            anim.SetTrigger("Death");
-            StartCoroutine("WaitToDeath");
+            estahVivo = false;
+            StartCoroutine(WaitToDeath());
         }
         else
         {
-            anim.SetLayerWeight(4, 0);
+            vida -= dano;
+            anim.SetTrigger("Hit");
         }
     }
 
-    IEnumerable WaitToDeath()
+    IEnumerator WaitToDeath()
     {
-        yield return new WaitForSeconds(2.5f);
-        Destroy(this.gameObject);
+        anim.SetTrigger("Death");
+        GetComponent<Rigidbody2D>().simulated = false;
+        GetComponent<Collider2D>().enabled = false;
+        yield return new WaitForSeconds(1.5f);
+        Destroy(gameObject.transform.parent.gameObject);
     }
 
+    IEnumerator Ataque()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        anim.SetBool("Ataque", true);
+
+        if(encounter)
+        {
+            player.GetComponent<Soldier>().Morte();
+        }
+
+        StartCoroutine(Ataque());
+    }
+
+    private void EnemyFlip()
+    {
+        if (player.position.x < transform.position.x)
+        {
+            direcao = 1;
+            sprite.flipX = true;
+        }
+        else
+        {
+            direcao = -1;
+            sprite.flipX = false;
+        }
+    }
+
+    private void LevarDanoSoldier()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            encounter = false;
+            Dano(10);
+        }
+    }
 }

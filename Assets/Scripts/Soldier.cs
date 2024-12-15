@@ -27,11 +27,6 @@ public class Soldier : MonoBehaviour
     [Header("Inventário")]
     [SerializeField] private List<GameObject> inventario = new List<GameObject>();
 
-    private void Awake()
-    {
-        LoadPlayer();
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -204,7 +199,7 @@ public class Soldier : MonoBehaviour
         return posInicial;
     }
 
-    private void Morte()
+    public void Morte()
     {
                 
         estaVivo = false;
@@ -352,40 +347,4 @@ public class Soldier : MonoBehaviour
         }
     }
 
-    [System.Serializable]
-    class SaveData
-    {
-        public Vector3 playerPosition;
-        public List<GameObject> inventario;
-        public List<GameObject> vidas;
-    }
-
-    public void SavePlayer()
-    {
-        SaveData data = new SaveData();
-        data.playerPosition = transform.position;
-        data.vidas = vidas;
-        data.inventario = inventario;
-
-        string json = JsonUtility.ToJson(data);
-
-        File.WriteAllText(Application.persistentDataPath + "/savePlayer.json", json);
-    }
-
-    public void LoadPlayer()
-    {
-        string path = Application.persistentDataPath + "/savePlayer.json";
-
-        if(File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-
-            SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            transform.position = data.playerPosition;
-            vidas = data.vidas;
-            inventario = data.inventario;
-        }
-        
-    }
-}
+    

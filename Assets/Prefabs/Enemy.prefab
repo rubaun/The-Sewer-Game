@@ -185,12 +185,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24b121727b72d974ba6843a7bed6477f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 0}
-  sprite: {fileID: 0}
+  player: {fileID: 0}
   velocidadePatrulha: 0.5
-  direcao: 1
-  triggerLeft: {fileID: 8095157535765334887}
-  triggerRight: {fileID: 7149658638258841839}
+  vida: 0
 --- !u!1 &4023098201033045684
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +200,7 @@ GameObject:
   - component: {fileID: 8095157535765334887}
   m_Layer: 0
   m_Name: TriggerLeft
-  m_TagString: Inimigo
+  m_TagString: TriggerLeft
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -216,7 +213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4023098201033045684}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -268,6 +265,39 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.08193128, y: 0.15127684}
   m_EdgeRadius: 0
+--- !u!1 &4682674448650652015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 888315291044904250}
+  m_Layer: 0
+  m_Name: Patrulha
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &888315291044904250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4682674448650652015}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4273597928483666730}
+  - {fileID: 8746364120957597460}
+  m_Father: {fileID: 6231240148195252893}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4989596214042469895
 GameObject:
   m_ObjectHideFlags: 0
@@ -298,7 +328,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6231240148195252893}
+  m_Father: {fileID: 888315291044904250}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6391669386819846910
 BoxCollider2D:
@@ -374,9 +404,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4273597928483666730}
   - {fileID: 8347810079516930432}
-  - {fileID: 8746364120957597460}
+  - {fileID: 888315291044904250}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6586961325223837907
@@ -391,7 +420,7 @@ GameObject:
   - component: {fileID: 7149658638258841839}
   m_Layer: 0
   m_Name: TriggerRight
-  m_TagString: Inimigo
+  m_TagString: TriggerRight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -486,7 +515,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6231240148195252893}
+  m_Father: {fileID: 888315291044904250}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &4797383784410330852
 BoxCollider2D:
