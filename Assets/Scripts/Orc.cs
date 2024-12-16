@@ -8,6 +8,7 @@ public class Orc : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float velocidadePatrulha;
     [SerializeField] private int vida;
+    [SerializeField] private GameObject particulasMorte;
     private bool estahVivo;
     private int direcao;
     private bool encounter;
@@ -119,6 +120,7 @@ public class Orc : MonoBehaviour
         GetComponent<Rigidbody2D>().simulated = false;
         GetComponent<Collider2D>().enabled = false;
         yield return new WaitForSeconds(1.5f);
+        Instantiate(particulasMorte, transform.position, Quaternion.identity);
         Destroy(gameObject.transform.parent.gameObject);
     }
 

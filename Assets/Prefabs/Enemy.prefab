@@ -187,7 +187,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   velocidadePatrulha: 0.5
-  vida: 0
+  vida: 50
+  particulasMorte: {fileID: 3930870140712860560, guid: 30a6a5a44f6f3e742857183a64096b43, type: 3}
 --- !u!1 &4023098201033045684
 GameObject:
   m_ObjectHideFlags: 0
