@@ -3,42 +3,72 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
-    public GameObject pauseMenu;
-    public GameObject telaMorte;
-    public GameObject gameOver;
-    public GameObject player;
-    public Soldier playerMovement;
-    public GameObject prefab;
-    public PlayerSound audioSource;
-  
+    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject telaMorte;
+    [SerializeField] private GameObject gameOver;
+    [SerializeField] private GameObject player;
+    [SerializeField] private Soldier playerMovement;
+    [SerializeField] private GameObject prefab;
+    [SerializeField] private PlayerSound audioSource;
+    [SerializeField] private string faseAtual;
+    private GameObject buttonContinue;
+    private bool pauseMenuAtivo;
 
 
     void Start() 
     {
-        playerMovement = player.GetComponent<Soldier>();
+        pauseMenuAtivo = false;
+
+        if (SceneManager.GetActiveScene().name != "Menu")
+        {
+            Soldier player = FindObjectOfType<Soldier>();
+            playerMovement = player.GetComponent<Soldier>();
+            faseAtual = player.GetFase();
+        }
+
         audioSource = GetComponent<PlayerSound>();
-      
+
+        
+
+        if (SaveSystem.SaveExists() && SceneManager.GetActiveScene().name == "Menu")
+        {
+            buttonContinue = GameObject.Find("Continue");
+            buttonContinue.GetComponent<Button>().interactable = true;
+            buttonContinue.GetComponent<Image>().color = new Color(0, 147, 255, 255);
+            buttonContinue.GetComponent<Button>().onClick.AddListener(ContinueGame);
+            
+        }
+        else if(SceneManager.GetActiveScene().name == "Menu")
+        {
+            buttonContinue = GameObject.Find("Continue");
+            buttonContinue.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+            buttonContinue.GetComponent<Button>().interactable = false;
+        }
     }
 
     void Update() 
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(SceneManager.GetActiveScene().name != "Menu")
         {
-            PauseMenu();
-        }
-
-        if(!playerMovement.VerificaSePlayerEstaVivo())
-        {
-            if(playerMovement.GameOver())
+            if(Input.GetKeyDown(KeyCode.Escape))
             {
-                TelaGameOver();
+                PauseMenu();
             }
-            else
+
+            if (!playerMovement.VerificaSePlayerEstaVivo())
             {
-                TelaDeMorte();
+                if (playerMovement.GameOver())
+                {
+                    TelaGameOver();
+                }
+                else
+                {
+                    TelaDeMorte();
+                }
             }
         }
     }
@@ -63,11 +93,27 @@ public class Menu : MonoBehaviour
 
     public void PauseMenu()
     {
-        if(pauseMenu != null)
+        if(!pauseMenu)
         {
+            pauseMenuAtivo = !pauseMenuAtivo;
             pauseMenu.SetActive(true);
             Time.timeScale = 0.0f;
-        }        
+        }
+        else if(pauseMenu)
+        {
+            pauseMenuAtivo = !pauseMenuAtivo;
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1.0f;
+        }
+    }
+
+    public void ContinueGame()
+    {
+        if(SaveSystem.SaveExists())
+        {
+            GameController gameController = GetComponent<GameController>();
+            gameController.LoadGame();
+        }
     }
 
     public void Continue()
@@ -95,7 +141,7 @@ public class Menu : MonoBehaviour
 
     public void Replay()
     {
-        if(prefab != null)
+        /*if(prefab != null)
         {
             Instantiate(prefab, 
                     playerMovement.PlayerPositionInicial(), 
@@ -103,6 +149,9 @@ public class Menu : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player");
             playerMovement = player.GetComponent<Soldier>();
             telaMorte.SetActive(false); 
-        }
+        }*/
+
+        
+        SceneManager.LoadScene(faseAtual);
     }
 }

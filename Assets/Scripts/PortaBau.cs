@@ -7,62 +7,61 @@ using UnityEditor;
 
 public class PortaBau : MonoBehaviour
 {
-    [Header("Código da chave")]
-    [SerializeField] private int codigo;
+    [Header("Cor que Abre")]
+    [SerializeField] private Color corDoBau = Color.white;
+    [SerializeField] private string cor;
     [SerializeField] private AudioClip audioClip;
+    [Header("Cor da Chave dentro do Baú")]
+    [SerializeField] private Color corDaChave = Color.white;
+    [SerializeField] private string corChave;
     [Header("Marque se for uma porta")]
     [SerializeField] private bool isPorta;
+    [Header("Cena a ser carregada")]
     [SerializeField] private SceneAsset nextScene;
     private AudioSource audioPlayer;
     private Animator anim;
     private GameObject player;
-    private GameObject chaveInterface;
-    [SerializeField] private List<GameObject> itens = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
         audioPlayer = GetComponent<AudioSource>();
+        GetComponent<SpriteRenderer>().color = corDoBau;
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
-        chaveInterface = GameObject.FindGameObjectWithTag("Key");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player") && player.GetComponent<Soldier>().ConsultaChave(codigo))
+        if(collision.gameObject.CompareTag("Player") && player.GetComponent<Soldier>().ConsultaChave())
         {
-            audioPlayer.PlayOneShot(audioClip);
-            if (anim != null)
+            if (cor == player.GetComponent<Soldier>().CorChave())
             {
-                anim.SetLayerWeight(1, 1);
-            }
-            player.GetComponent<Soldier>().RemoverChave(codigo);
-            chaveInterface.SetActive(false);
-            if (isPorta)
-            {
-                SceneManager.LoadScene(nextScene.name);
-            }
-            foreach (GameObject item in itens)
-            {
-                if(item.GetComponent<Key>())
+                audioPlayer.PlayOneShot(audioClip);
+                player.GetComponent<Soldier>().RemoverChave();
+
+                if (anim != null)
                 {
-                    item.gameObject.SetActive(true);
-                    item.GetComponent<Key>().ChaveParaInventario();
+                    anim.SetLayerWeight(1, 1);
+                }
+
+                if (isPorta)
+                {
+                    SceneManager.LoadScene(nextScene.name);
                 }
                 else
                 {
-                    player.GetComponent<Soldier>().AddItem(item);
+                    player.GetComponent<Soldier>().AddChave(corChave, corDaChave);
+                    DestuirComSom();
                 }
-                
-            }
-            
+            } 
         }
+    }
+
+    //Tocar o som e depois de um tempo destruir o objeto
+    private void DestuirComSom()
+    {
+        audioPlayer.PlayOneShot(audioClip);
+        Destroy(gameObject, audioClip.length);
     }
 }

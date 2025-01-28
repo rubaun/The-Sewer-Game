@@ -2,40 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Soldier : MonoBehaviour
 {
-    public Animator animPlayer;
-    public SpriteRenderer sprite;
-    public Rigidbody2D rb;
+    private Animator animPlayer;
+    private SpriteRenderer sprite;
+    private Rigidbody2D rb;
     private PlayerSound playerSound;
-    public Vector3 playerPosition;
-    public float moveH;
-    public float moveV;
-    public int velocidade;
-    public bool estaPulando = false;
-    public bool estaVivo = true;
-    public bool estaEscada = false;
+    private Vector3 playerPosition;
+    private float moveH;
+    private float moveV;
+    private bool estaPulando = false;
+    private bool estaVivo = true;
+    private bool estaEscada = false;
     private bool gameOver = false;
     private bool shot = false;
     private bool atirandoDir = true;
     private Vector3 posInicial;
-    public int vida = 3;
-    public GameObject arrow;
-    public GameObject mira;
-    public List<GameObject> vidas = new List<GameObject>();
-    [Header("Inventário")]
-    [SerializeField] private List<GameObject> inventario = new List<GameObject>();
+    private bool estahVulneravel = true;
+    [SerializeField] private List<GameObject> vidas = new List<GameObject>();
+    private bool temChave = false;
+    private string corChave;
+    private Color corDaInterface;
+    private GameObject chaveInterface;
+    [SerializeField] private float tempoInvulneravel = 1.5f;
+    [SerializeField] private int velocidade;
+    [SerializeField] private int vida = 3;
+    [SerializeField] private string faseAtual;
+    [SerializeField] private GameObject arrow;
+    [SerializeField] private GameObject mira;
 
+    
     // Start is called before the first frame update
     void Start()
     {
         animPlayer = GetComponent<Animator>();
+        chaveInterface = GameObject.Find("Key");
+        chaveInterface.SetActive(false);
         sprite = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         playerSound = GetComponent<PlayerSound>();
         posInicial = transform.position;
-        Vidas();
+        faseAtual = SceneManager.GetActiveScene().name;
+        
+        if(SaveSystem.SaveExists() && SaveSystem.GameLoaded())
+        {
+            GameData data = SaveSystem.Load();
+            VidasLoading(data.vida);
+            transform.position = new Vector3(data.checkpointPos[0], data.checkpointPos[1], 0);
+
+            if(data.checkpoint)
+            {
+                FindAnyObjectByType<Checkpoint>().GetComponent<ParticleSystem>().Stop();
+            }
+        }
+        else
+        {
+            VidasIniciais();
+        }
     }
 
     // Update is called once per frame
@@ -79,7 +105,7 @@ public class Soldier : MonoBehaviour
         }
 
         //Ataque Espada
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             animPlayer.SetLayerWeight(2, 1);
             playerSound.Sword1Sound();
@@ -90,7 +116,7 @@ public class Soldier : MonoBehaviour
         }
 
         //Arco
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonDown(1))
         {
             animPlayer.SetLayerWeight(3, 1);
             ArrowShot();
@@ -102,7 +128,7 @@ public class Soldier : MonoBehaviour
         }
 
         //Espada Pulo
-        if (Input.GetMouseButton(2))
+        if (Input.GetMouseButtonDown(2))
         {
             animPlayer.SetLayerWeight(4, 1);
             playerSound.Sword2Sound();
@@ -112,6 +138,7 @@ public class Soldier : MonoBehaviour
             animPlayer.SetLayerWeight(4, 0);
         }
     }
+
 
     void FixedUpdate()
     {
@@ -158,7 +185,7 @@ public class Soldier : MonoBehaviour
             {
                 other.gameObject.GetComponent<Orc>().Dano(Ataque());
             }
-            else if (Input.GetMouseButton(1))
+            else if (Input.GetMouseButton(2))
             {
                 other.gameObject.GetComponent<Orc>().Dano(AtaqueEspecial());
             }
@@ -184,11 +211,6 @@ public class Soldier : MonoBehaviour
         return Random.Range(15, 25);
     }
 
-    private int AtaqueArco()
-    {
-        return Random.Range(10, 15); ;
-    }
-
     public bool VerificaSePlayerEstaVivo()
     {
         return estaVivo;
@@ -207,19 +229,66 @@ public class Soldier : MonoBehaviour
         StartCoroutine("AnimaMorte");
     }
 
-    private void Vidas()
+    private void VidasIniciais()
     {
+        vida = 3;
         vidas.Add(GameObject.Find("Heart1"));
         vidas.Add(GameObject.Find("Heart2"));
         vidas.Add(GameObject.Find("Heart3"));
+    }
 
-        if (vidas[1] == null)
+    public void VidasLoading(int vidasI)
+    {
+        if(vidasI == 3)
         {
-            vida = 1;
+            vida = 3;
+            vidas.Add(GameObject.Find("Heart1"));
+            vidas.Add(GameObject.Find("Heart2"));
+            vidas.Add(GameObject.Find("Heart3"));
         }
-        else if (vidas[2] == null)
+        else if(vidasI == 2)
         {
             vida = 2;
+            vidas.Add(GameObject.Find("Heart1"));
+            vidas.Add(GameObject.Find("Heart2"));
+            GameObject.Find("Heart3").SetActive(false);
+        }
+        else if (vidasI == 1)
+        {
+            vida = 1;
+            vidas.Add(GameObject.Find("Heart1"));
+            GameObject.Find("Heart2").SetActive(false);
+            GameObject.Find("Heart3").SetActive(false);
+        }
+
+    }
+
+    public void PerdeVida()
+    {
+        if (estahVulneravel && vida > 0)
+        {
+            vida--;
+
+            if (vida == 2)
+            {
+                Destroy(vidas[2]);
+                animPlayer.SetLayerWeight(5, 1);
+                StartCoroutine("Vulneravel");
+            }
+            else if (vida == 1)
+            {
+                Destroy(vidas[1]);
+                animPlayer.SetLayerWeight(5, 1);
+                StartCoroutine("Vulneravel");
+            }
+            else if (vida == 0)
+            {
+                Destroy(vidas[0]);
+                animPlayer.SetLayerWeight(5, 1);
+                Morte();
+            }
+
+            animPlayer.SetLayerWeight(5, 0);
         }
     }
 
@@ -230,11 +299,11 @@ public class Soldier : MonoBehaviour
 
     private void ArrowShot()
     {
-        if (!shot)
+        if(!shot)
         {
             playerSound.ArrowSound();
 
-            if (atirandoDir)
+            if(atirandoDir)
             {
                 Instantiate(arrow, mira.transform.position, Quaternion.identity).GetComponent<Arrow>().ArrowRight();
             }
@@ -243,8 +312,15 @@ public class Soldier : MonoBehaviour
                 Instantiate(arrow, mira.transform.position, Quaternion.Euler(0, 180f, 0)).GetComponent<Arrow>().ArrowLeft();
             }
 
-            shot = true;
+            StartCoroutine("DestroyArrow");
         }
+    }
+
+    IEnumerator DestroyArrow()
+    {
+        shot = true;
+        yield return new WaitForSeconds(1.0f);
+        shot = false;
     }
 
     private void VerificaEstaEscada()
@@ -260,6 +336,13 @@ public class Soldier : MonoBehaviour
         }
     }
 
+    private IEnumerator Vulneravel()
+    {
+        estahVulneravel = false;
+        yield return new WaitForSeconds(tempoInvulneravel);
+        estahVulneravel = true;
+    }
+
     IEnumerator AnimaMorte()
     {
         animPlayer.SetTrigger("Death");
@@ -267,28 +350,6 @@ public class Soldier : MonoBehaviour
         playerSound.DeathSound();
 
         yield return new WaitForSeconds(2.0f);
-
-        if (vida == 3)
-        {
-            vida--;
-            vidas[2].gameObject.SetActive(false);
-        }
-        else if (vida == 2)
-        {
-            vida--;
-            vidas[1].gameObject.SetActive(false);
-        }
-        else if (vida == 1)
-        {
-            vidas[0].gameObject.SetActive(false);
-            sprite.enabled = false;
-            gameOver = true;
-        }
-
-        if (estaVivo)
-        {
-            StopCoroutine("AnimaMorte");
-        }
 
         Destroy(this.gameObject);
     }
@@ -305,46 +366,48 @@ public class Soldier : MonoBehaviour
         atirandoDir = false;
     }
 
-    public void AddItem(GameObject item)
+    public int GetVida()
     {
-        inventario.Add(item);
+        return vida;
     }
 
-    public bool ConsultaChave(int codigo)
+    public string GetFase()
     {
-        foreach (GameObject i in inventario)
-        {
-            if (i.GetComponent<Key>().GetCodigo() == codigo)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return SceneManager.GetActiveScene().name;
     }
 
-    public void RemoveItem(string item)
+    //Sitema de chave
+    public void AddChave(string cor, Color corDaChave)
     {
-        foreach (GameObject i in inventario)
+        temChave = true;
+        corChave = cor;
+        corDaInterface = corDaChave;
+        chaveInterface.SetActive(true);
+        chaveInterface.GetComponent<Image>().color = corDaInterface;
+    }
+
+    public bool ConsultaChave()
+    {
+        if (temChave)
         {
-            if (i.name == item)
-            {
-                inventario.Remove(i);
-                break;
-            }
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
-    public void RemoverChave(int codigo)
+    public string CorChave()
     {
-        foreach (GameObject i in inventario)
-        {
-            if (i.GetComponent<Key>().GetCodigo() == codigo)
-            {
-                inventario.Remove(i);
-                break;
-            }
-        }
+        return corChave;
+    }
+
+    public void RemoverChave()
+    {
+        temChave = false;
+        corChave = "";
+        chaveInterface.SetActive(false);
     }
 }
 

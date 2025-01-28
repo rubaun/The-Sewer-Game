@@ -9,9 +9,10 @@ public class Orc : MonoBehaviour
     [SerializeField] private float velocidadePatrulha;
     [SerializeField] private int vida;
     [SerializeField] private GameObject particulasMorte;
+    [SerializeField] private bool encounter;
+    private bool estahVulneravel = true;
     private bool estahVivo;
     private int direcao;
-    private bool encounter;
     private Animator anim;
     private SpriteRenderer sprite;
 
@@ -59,14 +60,7 @@ public class Orc : MonoBehaviour
             }
         }
 
-        if (collision.gameObject.CompareTag("Player") && estahVivo)
-        {
-            encounter = true;
-            EnemyFlip();
-            StartCoroutine(Ataque());
-        }
-
-        if (collision.gameObject.CompareTag("Arrow") && estahVivo)
+        if (collision.gameObject.CompareTag("Arrow") && estahVivo && estahVulneravel)
         {
             Dano(collision.gameObject.GetComponent<Arrow>().GetHit());
         }
@@ -74,9 +68,12 @@ public class Orc : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player"))
+
+        if(collision.gameObject.CompareTag("Player") && estahVivo)
         {
-            LevarDanoSoldier();
+            encounter = true;
+            EnemyFlip();
+            StartCoroutine(Ataque());
         }
     }
 
@@ -84,9 +81,6 @@ public class Orc : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player") && estahVivo)
         {
-            StopCoroutine(Ataque());
-            encounter = false;
-
             if (direcao == 1)
             {
                 direcao = -1;
@@ -97,6 +91,12 @@ public class Orc : MonoBehaviour
                 direcao = 1;
                 sprite.flipX = false;
             }
+        }
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            StopCoroutine(Ataque());
+            encounter = false;
         }
     }
 
@@ -111,7 +111,15 @@ public class Orc : MonoBehaviour
         {
             vida -= dano;
             anim.SetTrigger("Hit");
+            StartCoroutine("Vulneravel");
         }
+    }
+
+    IEnumerator Vulneravel()
+    {
+        estahVulneravel = false;
+        yield return new WaitForSeconds(0.5f);
+        estahVulneravel = true;
     }
 
     IEnumerator WaitToDeath()
@@ -119,20 +127,20 @@ public class Orc : MonoBehaviour
         anim.SetTrigger("Death");
         GetComponent<Rigidbody2D>().simulated = false;
         GetComponent<Collider2D>().enabled = false;
-        yield return new WaitForSeconds(1.5f);
         Instantiate(particulasMorte, transform.position, Quaternion.identity);
+        yield return new WaitForSeconds(1.0f);
         Destroy(gameObject.transform.parent.gameObject);
     }
 
     IEnumerator Ataque()
     {
-        yield return new WaitForSeconds(1.5f);
-
         anim.SetBool("Ataque", true);
 
-        if(encounter)
+        yield return new WaitForSeconds(0.8f);
+
+        if (encounter)
         {
-            player.GetComponent<Soldier>().Morte();
+            player.GetComponent<Soldier>().PerdeVida();
         }
 
         StartCoroutine(Ataque());
@@ -149,15 +157,6 @@ public class Orc : MonoBehaviour
         {
             direcao = -1;
             sprite.flipX = false;
-        }
-    }
-
-    private void LevarDanoSoldier()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            encounter = false;
-            Dano(10);
         }
     }
 }
