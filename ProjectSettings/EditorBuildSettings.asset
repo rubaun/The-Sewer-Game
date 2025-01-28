@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Fase2.unity
     guid: e8eb06d20168daf48a5d8f53e243bff2
   - enabled: 1
+    path: Assets/Scenes/Secreta.unity
+    guid: 54c09c0e86a80bf4abfd0f553522c8dd
+  - enabled: 1
+    path: Assets/Scenes/Fase2-1.unity
+    guid: 553a3c8310899aa48a74501ccfe9a99c
+  - enabled: 1
     path: Assets/Scenes/Thanks.unity
     guid: 1cea196d060f98f46898d08ed972f22d
   m_configObjects: {}

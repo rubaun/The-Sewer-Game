@@ -56,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b1b7e45cc80d63549a2719ad5d22cb0f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -172,10 +172,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0680e32d8c61f3949883ff76189f80e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  codigo: 1
+  corDoBau: {r: 1, g: 1, b: 1, a: 1}
+  cor: 
   audioClip: {fileID: 8300000, guid: fdea7f134bde5374690167e7915b4954, type: 3}
-  itens:
-  - {fileID: 0}
+  corDaChave: {r: 1, g: 1, b: 1, a: 1}
+  corChave: 
+  isPorta: 0
+  nextScene: {fileID: 0}
 --- !u!82 &2765875827268706862
 AudioSource:
   m_ObjectHideFlags: 0

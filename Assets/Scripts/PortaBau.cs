@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEditor;
@@ -16,8 +13,10 @@ public class PortaBau : MonoBehaviour
     [SerializeField] private string corChave;
     [Header("Marque se for uma porta")]
     [SerializeField] private bool isPorta;
+    [SerializeField] private GameObject spritePorta1;
+    [SerializeField] private GameObject spritePorta2;
     [Header("Cena a ser carregada")]
-    [SerializeField] private SceneAsset nextScene;
+    [SerializeField] private GameObject nextScene;
     private AudioSource audioPlayer;
     private Animator anim;
     private GameObject player;
@@ -26,7 +25,17 @@ public class PortaBau : MonoBehaviour
     void Start()
     {
         audioPlayer = GetComponent<AudioSource>();
-        GetComponent<SpriteRenderer>().color = corDoBau;
+
+        if(!isPorta)
+        {
+            GetComponent<SpriteRenderer>().color = corDoBau;
+        }
+        else
+        {
+            spritePorta1.GetComponent<SpriteRenderer>().color = corDoBau;
+            spritePorta2.GetComponent<SpriteRenderer>().color = corDoBau;
+        }
+            
         anim = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
@@ -35,9 +44,10 @@ public class PortaBau : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player") && player.GetComponent<Soldier>().ConsultaChave())
         {
-            if (cor == player.GetComponent<Soldier>().CorChave())
+            if(cor == player.GetComponent<Soldier>().CorChave())
             {
                 audioPlayer.PlayOneShot(audioClip);
+
                 player.GetComponent<Soldier>().RemoverChave();
 
                 if (anim != null)
@@ -54,7 +64,20 @@ public class PortaBau : MonoBehaviour
                     player.GetComponent<Soldier>().AddChave(corChave, corDaChave);
                     DestuirComSom();
                 }
-            } 
+            }
+            else if(cor == "")
+            {
+                DestuirComSom();
+            }
+            
+        }
+        else if(collision.gameObject.CompareTag("Player") && isPorta && cor == "")
+        {
+            SceneManager.LoadScene(nextScene.name);
+        }
+        else if(collision.gameObject.CompareTag("Player") && !isPorta && cor == "")
+        {
+            DestuirComSom();
         }
     }
 
